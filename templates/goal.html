@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Ціль{% endblock %}
+{% block content %}
+    <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
+    <p>Оберіть задачу цілі:</p>
+    <ul>
+    {% for task in tasks %}
+        <li><a href="/goal/{{task.GoalID}}/task/{{task.TaskID}}">Задача {{task.GoalID}}.{{ task.TaskID }}. {{task.ShortDescription}}</a></li>
+    {% endfor %}
+    </ul> 
+{% endblock %}

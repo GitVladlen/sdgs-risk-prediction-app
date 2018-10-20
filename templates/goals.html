@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Цілі{% endblock %}
+{% block content %}
+    <p>Оберіть ЦСР:</p>
+    <ul>
+    {% for goal in goals %}
+        <li><a href="/goal/{{goal.GoalID}}">{{ goal.GoalID }} {{goal.Title}}</a></li>
+    {% endfor %}
+    </ul> 
+{% endblock %}

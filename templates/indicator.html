@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}Індикатор{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+    <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
+    <p>Задача {{task.GoalID}}.{{task.TaskID}}</p>
+    <p>Індикатор {{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</p>
+    <p>{{indicator.Description}}</p>
+
+    <p>Значення індикатору:</p>
+
+    <ul>
+    {% for indicator in indicators %}
+        <li><a href="/goal/{{indicator.GoalID}}/task/{{indicator.TaskID}}/indicator/{{indicator.IndicatorID}}"> </a></li>
+    {% endfor %}
+    </ul>
+
+    <table> 
+        <tr>
+            <th>Індикатор</th>
+            <th>2015</th>
+            <th>2020</th>
+            <th>2025</th>
+            <th>2030</th>
+        </tr>
+        {% for value in values %}
+        <tr>
+            <td>{{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</td>
+            <td>{{value["2015"]}}</td>
+            <td>{{value["2020"]}}</td>
+            <td>{{value["2025"]}}</td>
+            <td>{{value["2030"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

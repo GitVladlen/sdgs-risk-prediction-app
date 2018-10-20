@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        {% block head %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <title>ЦСР 2030 - {% block title %}{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        <h1>Цілі сталого розвитку Укріїни 2015-2030 рр.</h1>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+          {% block footer %}
+          &copy; Copyright 2018 by Vladlen Fedorenko</a>.
+          {% endblock %}
+        </div>
+    </body>
+</html>

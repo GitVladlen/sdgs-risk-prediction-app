@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Задача{% endblock %}
+{% block content %}
+    <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
+    <p>Задача {{task.GoalID}}.{{task.TaskID}}</p>
+    <p>{{task.ShortDescription}}</p>
+    <p>Оберіть індикатор цілі:</p>
+    <ul>
+    {% for indicator in indicators %}
+        <li><a href="/goal/{{indicator.GoalID}}/task/{{indicator.TaskID}}/indicator/{{indicator.IndicatorID}}">Індикатор {{indicator.GoalID}}.{{ indicator.TaskID }}.{{indicator.IndicatorID}}. {{indicator.Description}}</a></li>
+    {% endfor %}
+    </ul> 
+{% endblock %}
