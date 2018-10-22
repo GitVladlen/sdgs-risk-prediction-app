@@ -21,48 +21,57 @@
 
 {% endblock %}
 {% block content %}
-    <p>Оберіть ЦСР:</p>
+<!--     <p>Оберіть ЦСР:</p>
     <ul>
     {% for goal in goals %}
         <li><a href="/goal/{{goal.GoalID}}">{{ goal.GoalID }} {{goal.Title}}</a></li>
     {% endfor %}
-    </ul> 
+    </ul>  -->
 
     <div class="container">
         <div class="component">
             <!-- Start Nav Structure -->
-            <button class="cn-button" id="cn-button">Menu</button>
-            <div class="cn-wrapper" id="cn-wrapper">
+            <!-- <button class="cn-button" id="cn-button">Menu</button> -->
+            <img class="cn-goal" id="cn-goal" src="{{ url_for('static', filename='images/OON.png') }}">
+            <div class="cn-wrapper opened-nav" id="cn-wrapper">
                 <ul>
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>Eight</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>About</span></a></li>
-
-                    <li><a href="#"><span>About</span></a></li>
-                    <li><a href="#"><span>Last</span></a></li>
-                    
+                    <li><a href="/goal/1" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_1.png') }}');" onmouseout="hideGoal();"><span>1</span></a></li>
+                    <li><a href="/goal/2" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_2.png') }}');" onmouseout="hideGoal();"><span>2</span></a></li>
+                    <li><a href="/goal/3" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_3.png') }}');" onmouseout="hideGoal();"><span>3</span></a></li>
+                    <li><a href="/goal/4" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_4.png') }}');" onmouseout="hideGoal();"><span>4</span></a></li>
+                    <li><a href="/goal/5" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_5.png') }}');" onmouseout="hideGoal();"><span>5</span></a></li>
+                    <li><a href="/goal/6" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_6.png') }}');" onmouseout="hideGoal();"><span>6</span></a></li>
+                    <li><a href="/goal/7" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_7.png') }}');" onmouseout="hideGoal();"><span>7</span></a></li>
+                    <li><a href="/goal/8" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_8.png') }}');" onmouseout="hideGoal();"><span>8</span></a></li>
+                    <li><a href="/goal/9" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_9.png') }}');" onmouseout="hideGoal();"><span>9</span></a></li>
+                    <li><a href="/goal/10" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_10.png') }}');" onmouseout="hideGoal();"><span>10</span></a></li>
+                    <li><a href="/goal/11" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_11.png') }}');" onmouseout="hideGoal();"><span>11</span></a></li>
+                    <li><a href="/goal/12" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_12.png') }}');" onmouseout="hideGoal();"><span>12</span></a></li>
+                    <li><a href="/goal/13" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_13.png') }}');" onmouseout="hideGoal();"><span>13</span></a></li>
+                    <li><a href="/goal/14" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_14.png') }}');" onmouseout="hideGoal();"><span>14</span></a></li>
+                    <li><a href="/goal/15" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_15.png') }}');" onmouseout="hideGoal();"><span>15</span></a></li>
+                    <li><a href="/goal/16" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_16.png') }}');" onmouseout="hideGoal();"><span>16</span></a></li>
+                    <li><a href="/goal/17" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_17.png') }}');" onmouseout="hideGoal();"><span>17</span></a></li>
                  </ul>
             </div>
             <!-- End of Nav Structure -->
         </div>
     </div>
 
+    <script type="text/javascript">
+        var goal = document.getElementById('cn-goal');
+
+        function showGoal(src) {
+            // goal.style.visibility = "visible";
+            goal.src = src;
+        }
+
+        function hideGoal() {
+            // goal.style.visibility = "hidden";
+            goal.src = "{{ url_for('static', filename='images/OON.png') }}";
+        }
+    </script>
+
     <script src="{{ url_for('static', filename='js/polyfills.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/demo2.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/demo2.js') }}"></script> -->
 {% endblock %}
