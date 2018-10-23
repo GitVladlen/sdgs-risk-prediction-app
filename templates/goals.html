@@ -33,7 +33,8 @@
             <!-- Start Nav Structure -->
             <!-- <button class="cn-button" id="cn-button">Menu</button> -->
             <img class="cn-goal" id="cn-goal" src="{{ url_for('static', filename='images/OON.png') }}">
-            <div class="cn-wrapper opened-nav" id="cn-wrapper">
+            <!-- <div class="cn-wrapper opened-nav" id="cn-wrapper"> -->
+            <div class="cn-wrapper" id="cn-wrapper">
                 <ul>
                     <li><a href="/goal/1" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_1.png') }}');" onmouseout="hideGoal();"><span>1</span></a></li>
                     <li><a href="/goal/2" onmouseover="showGoal('{{ url_for('static', filename='images/Sign_Goal_2.png') }}');" onmouseout="hideGoal();"><span>2</span></a></li>
@@ -73,5 +74,5 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/polyfills.js') }}"></script>
-    <!-- <script src="{{ url_for('static', filename='js/demo2.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/demo2.js') }}"></script>
 {% endblock %}

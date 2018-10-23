@@ -1,7 +1,8 @@
 (function(){
 
-	var button = document.getElementById('cn-button'),
-    wrapper = document.getElementById('cn-wrapper');
+	// var button = document.getElementById('cn-button'),
+    var button = document.getElementById('cn-goal');
+    var wrapper = document.getElementById('cn-wrapper');
 
     //open and close menu when the button is clicked
 	var open = false;
