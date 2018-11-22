@@ -26,6 +26,12 @@ def readData(filename):
 
     return data
 
+def writeData(filename, data):
+    filepath = os.path.join("static", "data", filename)
+
+    with open(filepath, 'w') as f:
+        json.dump(data, f, indent=4)
+
 def checkData(data, **filters):
     for filter_name in filters:
         filter_value = filters[filter_name]
@@ -80,6 +86,60 @@ def calcComputedValues():
 
     return computed_values
 
+def generateComputedValues(values, keys, gen_from_key, gen_for_keys):
+    import random
+
+    gen_values = []
+
+    for value in values:
+        get_from_value = value[gen_from_key]
+        gen_value = dict()
+        for key in ["GoalID", "TaskID", "IndicatorID"]:
+            gen_value[key] = value[key]
+
+        vsum = 0
+        for key in keys:
+            vsum += value[key]
+
+        avg = vsum / len(keys)
+
+        dsum = 0
+        for key in keys:
+            dsum += abs(avg - value[key])
+
+        prev = None
+        is_decay = False
+        for key in keys:
+            if prev is not None:
+                diff = prev - value[key]
+                if diff > 0:
+                    is_decay = True
+                    break
+            prev = value[key]
+
+        print ("{GoalID}.{TaskID}.{IndicatorID} is_decay = {is_decay}".format(
+            is_decay=is_decay,
+            **value))
+
+
+        davg = dsum / len(keys)
+
+        prev = get_from_value
+        for key in gen_for_keys:
+            if key == gen_from_key:
+                gen_value[key] = prev
+            else:
+                # gen_value[key] = round(get_from_value + random.uniform(-davg, davg), 1)
+                rand_value = random.uniform(0, davg)
+                if is_decay:
+                    rand_value = -rand_value
+                gen_value[key] = round(prev + rand_value, 1)
+
+            prev = gen_value[key]
+
+        gen_values.append(gen_value)
+
+    return gen_values
 
 # = endpoints =========================================================
 def goal(goal_id):
@@ -138,12 +198,53 @@ def indicator(goal_id, task_id, indicator_id):
 
     risk = (goal_id + task_id + indicator_id) % 3 
 
+    real_valus = readData("real_values.json")
+    real_indicator_values = selectFromData(real_valus, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
+
+    # indicator_labels
+    def __uniques_indicator_labels(_indicator_values):
+        _unique_indicator_labels = []
+        for indicator_value in _indicator_values:
+            for key in indicator_value:
+                if "20" in key and key not in _unique_indicator_labels:
+                    _unique_indicator_labels.append(int(key))
+        _unique_indicator_labels.sort()
+        return [str(l) for l in _unique_indicator_labels]
+
+    unique_indicator_labels = __uniques_indicator_labels(indicator_values)
+    unique_real_indicator_labels = __uniques_indicator_labels(real_indicator_values)
+
+    pre_labels = []
+    for label in unique_indicator_labels + unique_real_indicator_labels:
+        if label not in pre_labels:
+            pre_labels.append(int(label))
+    pre_labels.sort()
+
+    labels = [str(l) for l in pre_labels]
+    indicator_tuple_values = []
+    for indicator_value in indicator_values:
+        for unique_indicator_label in unique_indicator_labels:
+            _value = indicator_value[unique_indicator_label]
+            indicator_tuple_values.append((unique_indicator_label, _value))
+
+
     params = dict(
         goal = goal,
         task = task,
         indicator = indicator,
-        values = indicator_values,
+
+        labels = labels,
+
+        indicator_labels = unique_indicator_labels,
+        indicator_values = indicator_values,
+
+        indicator_tuple_values = indicator_tuple_values,
+
+        real_indicator_labels = unique_real_indicator_labels,
+        real_indicator_values = real_indicator_values,
+
         computed_values = computed_indicator_values,
+
         risk = risk
     )
 
@@ -160,6 +261,22 @@ def job(goal_id, task_id=None, indicator_id=None):
         return task(goal_id, task_id)
     else:
         return indicator(goal_id, task_id, indicator_id)
+
+@app.route('/data/<mode>')
+@app.route('/data')
+def data(mode=None):
+    if mode == "gen":
+        generated_values = generateComputedValues(
+            readData("values.json"),
+            ["2015", "2020", "2025", "2030"],
+            "2015",
+            ["2015", "2016", "2017", "2018"])
+
+        writeData("real_values.json", generated_values)
+    else:
+        generated_values = readData("real_values.json")
+
+    return "<pre>{}</pre>".format(json.dumps(generated_values, indent=4))
 
 @app.route('/')
 def start():

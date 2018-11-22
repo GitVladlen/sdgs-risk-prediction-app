@@ -49,7 +49,7 @@
             <th>2025</th>
             <th>2030</th>
         </tr>
-        {% for value in values %}
+        {% for value in indicator_values %}
         <tr>
             <td>{{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</td>
             <td>{{value["2015"]}}</td>
@@ -77,45 +77,35 @@
         {% endfor %}
     </table> 
 
-    <canvas id="indicator"height="50"></canvas>
+    <canvas id="indicator" height="50"></canvas>
     <script>
         new Chart(document.getElementById("indicator"), {
             type: 'line',
             data: {
               labels: [
-                "2015",
-                "2020",
-                "2025",
-                "2030"
+                {% for label in labels %}
+                    "{{label}}",
+                {% endfor %}
               ],
               datasets: [
-                {% for value in values %}
+                {% for value in indicator_values %}
                 {
                   data: [
-                    {{value["2015"]}},
-                    {{value["2020"]}},
-                    {{value["2025"]}},
-                    {{value["2030"]}}
-                 ],
-                 label: "Порогове значення",
+                    {% for year, indicator_value in indicator_tuple_values %}
+                        {
+                            x: {{year}},
+                            y: {{indicator_value}}
+                        },
+                    {% endfor %}
+                  ],
+                  label: "Порогове значення",
                   backgroundColor: "rgb(255, 0, 0)",
                   fill: false
                 },
                 {% endfor %}
 
-                {% for value in computed_values %}
-                {
-                  data: [
-                    {{value["2015"]}},
-                    {{value["2020"]}},
-                    {{value["2025"]}},
-                    {{value["2030"]}}
-                 ],
-                 label: "Прогнозоване значення",
-                  backgroundColor: "rgb(0, 0, 255)",
-                  fill: false
-                },
-                {% endfor %}
+
+
               ]
             },
             options: {
