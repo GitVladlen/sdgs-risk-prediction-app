@@ -7,21 +7,21 @@
         {% endblock %}
     </head>
     <body>
-<!--         <div id=header>
-            <div align="center"><img width="200" src="{{ url_for('static', filename='images/kpi-logo.png') }}"></div>
-            <div align="center"><h1>Цілі сталого розвитку Укріїни 2015-2030 рр.</h1></div>
-            <div align="center"><img width="200" src="{{ url_for('static', filename='images/kpi-logo.png') }}"></div>
-        </div> -->
-        <table width="100%" style="margin: 1em">
-            <tr>
-                <td align="center"><img height="150" src="{{ url_for('static', filename='images/kpi-logo.png') }}"></td>
-                <td align="center"><h1>Цілі сталого розвитку України 2015-2030 рр.</h1></td>
-                <td align="center"><img height="150" src="{{ url_for('static', filename='images/tef-logo.png') }}"></td>
-            </tr>
-        </table>
-        
-        <div id="content">{% block content %}{% endblock %}</div>
-        <div id="footer" align="center">
+        {% block header %}
+        <div class=header>
+            <div><img src="{{ url_for('static', filename='images/tef-logo.png') }}"></div>
+            <div><h1>Цілі сталого розвитку Укріїни 2015-2030 рр.</h1></div>
+            <div><img src="{{ url_for('static', filename='images/kpi-logo.png') }}"></div>
+        </div>
+        {% endblock %}
+        <div class="menu">
+            {% block menu %}
+            {% endblock %}
+        </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="footer" align="center">
           {% block footer %}
           &copy; Copyright 2018 by Vladlen Fedorenko</a>.
           {% endblock %}

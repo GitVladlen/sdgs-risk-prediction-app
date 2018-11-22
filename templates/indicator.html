@@ -19,6 +19,13 @@
         background-color: #dddddd;
     }
   </style>
+  <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+{% endblock %}
+{% block menu %}
+    <a href="/">Вибір цілі</a> > 
+    <a href="/goal/{{goal.GoalID}}">Ціль {{goal.GoalID}}.</a> > 
+    <a href="/goal/{{task.GoalID}}/task/{{task.TaskID}}">Задача {{task.GoalID}}.{{task.TaskID}}</a> > 
+    <a href="/goal/{{indicator.GoalID}}/task/{{indicator.TaskID}}/indicator/{{indicator.IndicatorID}}">Індикатор {{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</a>
 {% endblock %}
 {% block content %}
     <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
@@ -36,7 +43,7 @@
 
     <table> 
         <tr>
-            <th>Індикатор</th>
+            <th>Індикатор (порогове значення)</th>
             <th>2015</th>
             <th>2020</th>
             <th>2025</th>
@@ -51,5 +58,73 @@
             <td>{{value["2030"]}}</td>
         </tr>
         {% endfor %}
-    </table>
+
+        <tr>
+            <th>Індикатор (прогнозоване)</th>
+            <th>2015</th>
+            <th>2020</th>
+            <th>2025</th>
+            <th>2030</th>
+        </tr>
+        {% for value in computed_values %}
+        <tr>
+            <td>{{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</td>
+            <td>{{value["2015"]}}</td>
+            <td>{{value["2020"]}}</td>
+            <td>{{value["2025"]}}</td>
+            <td>{{value["2030"]}}</td>
+        </tr>
+        {% endfor %}
+    </table> 
+
+    <canvas id="indicator"height="50"></canvas>
+    <script>
+        new Chart(document.getElementById("indicator"), {
+            type: 'line',
+            data: {
+              labels: [
+                "2015",
+                "2020",
+                "2025",
+                "2030"
+              ],
+              datasets: [
+                {% for value in values %}
+                {
+                  data: [
+                    {{value["2015"]}},
+                    {{value["2020"]}},
+                    {{value["2025"]}},
+                    {{value["2030"]}}
+                 ],
+                 label: "Порогове значення",
+                  backgroundColor: "rgb(255, 0, 0)",
+                  fill: false
+                },
+                {% endfor %}
+
+                {% for value in computed_values %}
+                {
+                  data: [
+                    {{value["2015"]}},
+                    {{value["2020"]}},
+                    {{value["2025"]}},
+                    {{value["2030"]}}
+                 ],
+                 label: "Прогнозоване значення",
+                  backgroundColor: "rgb(0, 0, 255)",
+                  fill: false
+                },
+                {% endfor %}
+              ]
+            },
+            options: {
+              title: {
+                display: true,
+                text: 'Індикатор {{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.'
+              }
+            }
+        });
+    </script>
+
 {% endblock %}

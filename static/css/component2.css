@@ -20,8 +20,8 @@ body {
 
 .component {
 	position: relative;
-	margin-bottom: 17em;
-	height: 15em;
+	margin-bottom: 16em;
+	height: 13em;
 	/*background: rgba(0,0,0,0.05);*/
 	font-family: 'Lato', Arial, sans-serif;
 }

@@ -1,11 +1,51 @@
-/*#header {
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', Arial, sans-serif;
+    padding: 10px;
+    background: #f1f1f1;
+}
+
+/* Header */
+.header {
+    padding: 30px;
+    text-align: center;
+    /*background: white;*/
+}
+
+.header div {
     float: left;
 }
 
-#conternt {
-    clear: both;
-}*/
+.header div:nth-child(1) {
+    width: 15%;
+}
 
-#header {
-    font-family: Verdana;
+.header div:nth-child(2) {
+    width: 70%;
+}
+
+.header div:nth-child(3) {
+    width: 15%;
+}
+
+.header div img {
+    height: 150px;
+}
+
+.header::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.header h1 {
+    font-size: 40px;
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
 }

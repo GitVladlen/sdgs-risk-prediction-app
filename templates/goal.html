@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 {% block title %}Ціль{% endblock %}
+
+{% block menu %}
+    <a href="/">Вибір цілі</a> > 
+    <a href="/goal/{{goal.GoalID}}">Ціль {{goal.GoalID}}.</a>
+{% endblock %}
+
 {% block content %}
     <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
     <p>Оберіть задачу цілі:</p>

@@ -2,9 +2,20 @@
 import os
 import json
 
-from flask import Flask, render_template
+from flask import Flask, render_template, g
 
 app = Flask(__name__)
+
+class DataManager(object):
+    s_computed_values = None
+
+    @staticmethod
+    def setComputedValues(values):
+        DataManager.s_computed_values = values
+
+    @staticmethod
+    def getComputedValues():
+        return DataManager.s_computed_values
 
 # = service ===========================================================
 def readData(filename):
@@ -36,6 +47,38 @@ def selectFromData(data, **filters):
         if checkData(elem, **filters) is True:
             selected.append(elem)
     return selected
+
+def calcComputedValues():
+    import random
+
+    keys = ["2015", "2020", "2025", "2030"]
+
+    values = readData("values.json")
+
+    computed_values = []
+
+    for value in values:
+        computed_value = dict()
+        computed_value.update(value)
+
+        vsum = 0
+        for key in keys:
+            vsum += value[key]
+
+        avg = vsum / len(keys)
+
+        dsum = 0
+        for key in keys:
+            dsum += abs(avg - value[key])
+
+        davg = dsum / len(keys)
+
+        for key in ["2015", "2020", "2025", "2030"]:
+            computed_value[key] = round(computed_value[key] + random.uniform(-davg, davg), 1)
+
+        computed_values.append(computed_value)
+
+    return computed_values
 
 
 # = endpoints =========================================================
@@ -90,13 +133,18 @@ def indicator(goal_id, task_id, indicator_id):
     values = readData("values.json")
     indicator_values = selectFromData(values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
 
-    print ("values", indicator_values)
+    computed_values = DataManager.getComputedValues()
+    computed_indicator_values = selectFromData(computed_values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
+
+    risk = (goal_id + task_id + indicator_id) % 3 
 
     params = dict(
         goal = goal,
         task = task,
         indicator = indicator,
-        values = indicator_values
+        values = indicator_values,
+        computed_values = computed_indicator_values,
+        risk = risk
     )
 
     return render_template('indicator.html', **params)
@@ -112,9 +160,11 @@ def job(goal_id, task_id=None, indicator_id=None):
         return task(goal_id, task_id)
     else:
         return indicator(goal_id, task_id, indicator_id)
-    
 
 @app.route('/')
 def start():
+    if DataManager.getComputedValues() is None:
+        computed_values = calcComputedValues()
+        DataManager.setComputedValues(computed_values)
 
     return render_template('goals.html', goals=readData('goals.json'))

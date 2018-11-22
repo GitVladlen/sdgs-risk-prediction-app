@@ -1,5 +1,23 @@
 {% extends "layout.html" %}
 {% block title %}Задача{% endblock %}
+{% block head %}
+{{ super() }}
+<!--     <style type="text/css">
+        .header div img {
+            height: 50px;
+        }
+
+        .header h1 {
+            font-size: 25px;
+        }
+
+    </style> -->
+{% endblock %}
+{% block menu %}
+    <a href="/">Вибір цілі</a> > 
+    <a href="/goal/{{goal.GoalID}}">Ціль {{goal.GoalID}}.</a> > 
+    <a href="/goal/{{task.GoalID}}/task/{{task.TaskID}}">Задача {{task.GoalID}}.{{task.TaskID}}</a>
+{% endblock %}
 {% block content %}
     <p>Ціль {{goal.GoalID}}. {{goal.Title}}</p>
     <p>Задача {{task.GoalID}}.{{task.TaskID}}</p>
