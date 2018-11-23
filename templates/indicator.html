@@ -49,63 +49,61 @@
             <th>2025</th>
             <th>2030</th>
         </tr>
-        {% for value in indicator_values %}
-        <tr>
-            <td>{{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</td>
-            <td>{{value["2015"]}}</td>
-            <td>{{value["2020"]}}</td>
-            <td>{{value["2025"]}}</td>
-            <td>{{value["2030"]}}</td>
-        </tr>
-        {% endfor %}
 
         <tr>
-            <th>Індикатор (прогнозоване)</th>
-            <th>2015</th>
-            <th>2020</th>
-            <th>2025</th>
-            <th>2030</th>
-        </tr>
-        {% for value in computed_values %}
-        <tr>
             <td>{{indicator.GoalID}}.{{indicator.TaskID}}.{{indicator.IndicatorID}}.</td>
-            <td>{{value["2015"]}}</td>
-            <td>{{value["2020"]}}</td>
-            <td>{{value["2025"]}}</td>
-            <td>{{value["2030"]}}</td>
+            <td>{{indicator_value["2015"]}}</td>
+            <td>{{indicator_value["2020"]}}</td>
+            <td>{{indicator_value["2025"]}}</td>
+            <td>{{indicator_value["2030"]}}</td>
         </tr>
-        {% endfor %}
+
     </table> 
 
-    <canvas id="indicator" height="50"></canvas>
+    <canvas id="indicator" height="100"></canvas>
     <script>
         new Chart(document.getElementById("indicator"), {
             type: 'line',
             data: {
               labels: [
                 {% for label in labels %}
-                    "{{label}}",
+                "{{label}}",
                 {% endfor %}
               ],
               datasets: [
-                {% for value in indicator_values %}
                 {
                   data: [
-                    {% for year, indicator_value in indicator_tuple_values %}
-                        {
-                            x: {{year}},
-                            y: {{indicator_value}}
-                        },
+                    {% for indicator_plot_value in indicator_plot_values %}
+                    {{indicator_plot_value}},
                     {% endfor %}
                   ],
                   label: "Порогове значення",
                   backgroundColor: "rgb(255, 0, 0)",
-                  fill: false
+                  fill: false,
+                  spanGaps: true
                 },
-                {% endfor %}
-
-
-
+                {
+                  data: [
+                    {% for real_indicator_plot_value in real_indicator_plot_values %}
+                    {{real_indicator_plot_value}},
+                    {% endfor %}
+                  ],
+                  label: "Реальне значення",
+                  backgroundColor: "rgb(0, 255, 0)",
+                  fill: false,
+                  spanGaps: true
+                },
+                {
+                  data: [
+                    {% for forecast_indicator_plot_value in forecast_indicator_plot_values %}
+                    {{forecast_indicator_plot_value}},
+                    {% endfor %}
+                  ],
+                  label: "Прогнозоване значення",
+                  backgroundColor: "rgb(0, 0, 255)",
+                  fill: false,
+                  spanGaps: true
+                },
               ]
             },
             options: {

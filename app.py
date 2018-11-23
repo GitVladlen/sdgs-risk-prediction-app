@@ -17,6 +17,46 @@ class DataManager(object):
     def getComputedValues():
         return DataManager.s_computed_values
 
+# = prognose ==========================================================
+def give_forcast(forecast_prev, value_prev, alpha):
+    forecast_prev_error = value_prev - forecast_prev
+    return forecast_prev + alpha * forecast_prev_error
+
+def simple_exp_smoothing(real_data, labels, alpha):
+    forecast_error = 0
+    forecast_data = {}
+    forecast_prev = None
+    value_prev = None
+
+    forecast_prev_error = None
+
+    for label in labels:
+        value = real_data.get(label)
+
+        if forecast_prev is None and value_prev is None:
+            forecast_prev = value
+            value_prev = value
+            continue
+
+        forecast_cur = give_forcast(forecast_prev, value_prev, alpha)
+        forecast_data[label] = forecast_cur
+
+        forecast_prev = forecast_cur
+        value_prev = value
+
+    print("""
+ SES:
+  DATA = {}
+  LABELS = {}
+  FORECAST = {}""".format(
+        json.dumps(real_data, indent=4),
+        labels,
+        json.dumps(forecast_data, indent=4)
+        ))
+
+    return forecast_data, forecast_prev, value_prev
+
+
 # = service ===========================================================
 def readData(filename):
     filepath = os.path.join("static", "data", filename)
@@ -191,42 +231,76 @@ def indicator(goal_id, task_id, indicator_id):
     indicator = findInData(indicators, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
 
     values = readData("values.json")
-    indicator_values = selectFromData(values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
+    indicator_value = findInData(values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
 
-    computed_values = DataManager.getComputedValues()
-    computed_indicator_values = selectFromData(computed_values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
+    # computed_values = DataManager.getComputedValues()
+    # computed_indicator_value = findInData(computed_values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
 
+    real_values = readData("real_values.json")
+    real_indicator_value = findInData(real_values, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
+
+    # dummy risk evaluation
     risk = (goal_id + task_id + indicator_id) % 3 
 
-    real_valus = readData("real_values.json")
-    real_indicator_values = selectFromData(real_valus, GoalID=goal_id, TaskID=task_id, IndicatorID=indicator_id)
-
     # indicator_labels
-    def __uniques_indicator_labels(_indicator_values):
+    def __unique_indicator_labels(_indicator_value):
         _unique_indicator_labels = []
-        for indicator_value in _indicator_values:
-            for key in indicator_value:
-                if "20" in key and key not in _unique_indicator_labels:
-                    _unique_indicator_labels.append(int(key))
+        for _key in _indicator_value:
+            if "20" in _key and _key not in _unique_indicator_labels:
+                _unique_indicator_labels.append(int(_key))
         _unique_indicator_labels.sort()
         return [str(l) for l in _unique_indicator_labels]
 
-    unique_indicator_labels = __uniques_indicator_labels(indicator_values)
-    unique_real_indicator_labels = __uniques_indicator_labels(real_indicator_values)
+    unique_indicator_labels = __unique_indicator_labels(indicator_value)
+    unique_real_indicator_labels = __unique_indicator_labels(real_indicator_value)
+
+    # make prognose
+    alpha = 0.5
+    forecast_value, forecast_prev, value_prev = simple_exp_smoothing(real_indicator_value, unique_real_indicator_labels, alpha)
+
+    forecast_labels = [str(l) for l in range(2019, 2031)]
+
+    for label in forecast_labels:
+        # forecast_cur = give_forcast(forecast_prev, value_prev, alpha)
+
+        forecast_cur = alpha * value_prev + (1-alpha) * forecast_prev
+
+        forecast_value[label] = forecast_cur
+
+        forecast_prev = forecast_cur
+        # value_prev = value_prev
+    
+    # merge all labels
+    all_indicator_labels = unique_indicator_labels + unique_real_indicator_labels + forecast_labels
 
     pre_labels = []
-    for label in unique_indicator_labels + unique_real_indicator_labels:
-        if label not in pre_labels:
-            pre_labels.append(int(label))
+    for label in all_indicator_labels:
+        int_label = int(label)
+        if int_label not in pre_labels:
+            pre_labels.append(int_label)
     pre_labels.sort()
 
     labels = [str(l) for l in pre_labels]
-    indicator_tuple_values = []
-    for indicator_value in indicator_values:
-        for unique_indicator_label in unique_indicator_labels:
-            _value = indicator_value[unique_indicator_label]
-            indicator_tuple_values.append((unique_indicator_label, _value))
 
+    print(" >> LABELS: {}".format(labels))
+
+    def __getPlotValuesForLabels(_value, _labels):
+        _plot_values = []
+
+        for _label in _labels:
+            _plot_value = _value.get(_label, "null")
+            _plot_values.append(_plot_value)
+
+        return _plot_values
+
+
+    indicator_plot_values = __getPlotValuesForLabels(indicator_value, labels)
+    real_indicator_plot_values = __getPlotValuesForLabels(real_indicator_value, labels)
+    # computed_indicator_plot_values = __getPlotValuesForLabels(computed_indicator_value, labels)
+
+
+
+    forecast_plot_values = __getPlotValuesForLabels(forecast_value, labels)
 
     params = dict(
         goal = goal,
@@ -235,16 +309,18 @@ def indicator(goal_id, task_id, indicator_id):
 
         labels = labels,
 
-        indicator_labels = unique_indicator_labels,
-        indicator_values = indicator_values,
+        indicator_value = indicator_value,
+        indicator_plot_values = indicator_plot_values,
 
-        indicator_tuple_values = indicator_tuple_values,
+        real_indicator_value = real_indicator_value,
+        real_indicator_plot_values = real_indicator_plot_values,
 
-        real_indicator_labels = unique_real_indicator_labels,
-        real_indicator_values = real_indicator_values,
+        forecast_indicator_value = forecast_value,
+        forecast_indicator_plot_values = forecast_plot_values,
 
-        computed_values = computed_indicator_values,
-
+        # computed_indicator_value = computed_indicator_value,
+        # computed_indicator_plot_values = computed_indicator_plot_values,
+        
         risk = risk
     )
 
